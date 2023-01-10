@@ -9,10 +9,7 @@ describe("Test 'greeter' service", () => {
 	// unit test function logic
 	describe("Test 'greeter.hello' action", () => {
 		test("should return with 'Hello Moleculer'", () => {
-			// still calls original function ???
-			// jest.spyOn(service.provider, "hello").mockImplementation(() => "goodbye");
-			// does not call original function
-			jest.spyOn(service, "hello").mockImplementation(() => "goodbye");
+			jest.spyOn(service.provider, "helloInternal").mockImplementation(() => "goodbye");
 			const res = service.hello();
 			expect(res).toBe("goodbye");
 		});

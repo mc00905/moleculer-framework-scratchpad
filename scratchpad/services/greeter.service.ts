@@ -1,5 +1,6 @@
 import type { Context, ServiceBroker } from "moleculer";
 import { Service } from "moleculer";
+import gatewaymixin from "../mixins/HttpResponse.mixin";
 import GreeterProvider from "../providers/greeter.provider";
 
 export interface ActionHelloParams {
@@ -14,6 +15,7 @@ class GreeterService extends Service {
 		this.provider = provider;
 		this.parseServiceSchema({
 			name: "greeter",
+			mixins: [gatewaymixin],
 			settings: {
 				defaultName: "Moleculer",
 			},
@@ -35,18 +37,20 @@ class GreeterService extends Service {
 					handler: this.welcome,
 				},
 			},
+			
 			started: this.started,
 		});
 	}
 
 	hello(): string {
-		console.log('called hello real')
-		return this.provider.hello();
+		return this.provider.helloInternal();
 	}
 
 	welcome(ctx: Context<ActionHelloParams>): string {
 		const { name } = ctx.params;
-		return this.provider.welcome(name);
+		// override response with custom mixin
+		this.return201(ctx)
+		return this.provider.welcomeInternal(name);
 	}
 
 	localFunc(): string {

@@ -1,9 +1,9 @@
 export default class GreeterProvider {
-	hello(): string {
+	helloInternal(): string {
 		return "Hello!";
 	}
 
-	welcome(name: string): string {
+	welcomeInternal(name: string): string {
 		return `Welcome ${name}`;
 	}
 }

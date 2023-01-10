@@ -8,6 +8,7 @@ interface Meta {
 	user?: object | null | undefined;
 }
 
+
 class ApiService extends Service<ApiSettingsSchema> {
 	constructor(broker: ServiceBroker) {
 		super(broker);
@@ -71,14 +72,6 @@ class ApiService extends Service<ApiSettingsSchema> {
 				logRequestParams: null,
 				// Logging the response data. Set to any log level to enable it. E.g. "info"
 				logResponseData: null,
-
-				// Serve assets from "public" folder. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Serve-static-files
-				assets: {
-					folder: "public",
-
-					// Options to `server-static` module
-					options: {},
-				},
 			},
 		});
 	}
