@@ -1,6 +1,6 @@
 import type { Context, ServiceBroker } from "moleculer";
-import { Service,  } from "moleculer";
-import type { IncomingRequest, Route } from "moleculer-web";
+import { Service } from "moleculer";
+import type { ApiSettingsSchema, IncomingRequest, Route } from "moleculer-web";
 import ApiGateway from "moleculer-web";
 
 interface Meta {
@@ -8,7 +8,7 @@ interface Meta {
 	user?: object | null | undefined;
 }
 
-class ApiService extends Service {
+class ApiService extends Service<ApiSettingsSchema> {
 	constructor(broker: ServiceBroker) {
 		super(broker);
 		this.parseServiceSchema({
@@ -16,28 +16,34 @@ class ApiService extends Service {
 			mixins: [ApiGateway],
 			settings: {
 				port: process.env.PORT != null ? Number(process.env.PORT) : 3000,
-
 				ip: "0.0.0.0",
-
 				use: [],
 
 				routes: [
 					{
 						path: "/api",
 
-						whitelist: ["greeter.*"],
+						whitelist: ["**"],
 
+						// Route-level Express middlewares. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Middlewares
 						use: [],
 
+						// Enable/disable parameter merging method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Disable-merging
 						mergeParams: true,
 
-						authentication: false,
+						// Enable authentication. Implement the logic into `authenticate` method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Authentication
+						authentication: true,
 
-						authorization: false,
+						// Enable authorization. Implement the logic into `authorize` method. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Authorization
+						authorization: true,
+
+						// The auto-alias feature allows you to declare your route alias directly in your services.
+						// The gateway will dynamically build the full routes from service schema.
 						autoAliases: true,
 
 						aliases: {},
 
+						// Calling options. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Calling-options
 						callingOptions: {},
 
 						bodyParsers: {
@@ -51,58 +57,45 @@ class ApiService extends Service {
 							},
 						},
 
+						// Mapping policy setting. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Mapping-policy
 						mappingPolicy: "all", // Available values: "all", "restrict"
 
+						// Enable/disable logging
 						logging: true,
 					},
 				],
 
+				// Do not log client side errors (does not log an error response when the error.code is 400<=X<500)
 				log4XXResponses: false,
-				logRequestParams: "info",
-				logResponseData: "info",
+				// Logging the request parameters. Set to any log level to enable it. E.g. "info"
+				logRequestParams: null,
+				// Logging the response data. Set to any log level to enable it. E.g. "info"
+				logResponseData: null,
 
+				// Serve assets from "public" folder. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Serve-static-files
 				assets: {
 					folder: "public",
 
+					// Options to `server-static` module
 					options: {},
 				},
 			},
 		});
 	}
 
-	authenticate(ctx: Context, route: Route, req: IncomingRequest): Record<string, unknown> | null {
-		// Read the token from header
-		const auth = req.headers.authorization;
+	authenticate(
+		ctx: Context,
+		route: Route,
+		req: IncomingRequest,
+	): Record<string, unknown> | null {
+		// Returns the resolved user. It will be set to the `ctx.meta.user`
+		return { id: 1, name: "John Doe", role: "Admin" };
 
-		if (auth && auth.startsWith("Bearer")) {
-			const token = auth.slice(7);
-
-			// Check the token. Tip: call a service which verify the token. E.g. `accounts.resolveToken`
-			if (token === "123456") {
-				// Returns the resolved user. It will be set to the `ctx.meta.user`
-				return { id: 1, name: "John Doe" };
-			}
-			// Invalid token
-			throw new ApiGateway.Errors.UnAuthorizedError(
-				ApiGateway.Errors.ERR_INVALID_TOKEN,
-				null,
-			);
-		} else {
-			// No token. Throw an error or do nothing if anonymous access is allowed.
-			// throw new E.UnAuthorizedError(E.ERR_NO_TOKEN);
-			return null;
-		}
 	}
 
-	authorize(ctx: Context<null, Meta>, route: Route, req: IncomingRequest): any {
+	authorize(ctx: Context<null, Meta>, route: Route, req: IncomingRequest): void {
 		// Get the authenticated user.
 		const { user } = ctx.meta;
-
-		// It check the `auth` property in action schema.
-		if (req.$action.auth === "required" && !user) {
-			throw new ApiGateway.Errors.UnAuthorizedError("NO_RIGHTS", null);
-		}
-		return user;
 	}
 }
 

@@ -1,6 +1,6 @@
 import type { Context, ServiceBroker } from "moleculer";
 import { Service } from "moleculer";
-import GreeterProvider  from "../providers/greeter.provider";
+import GreeterProvider from "../providers/greeter.provider";
 
 export interface ActionHelloParams {
 	name: string;
@@ -35,11 +35,12 @@ class GreeterService extends Service {
 					handler: this.welcome,
 				},
 			},
-			started: this.started
+			started: this.started,
 		});
 	}
 
 	hello(): string {
+		console.log('called hello real')
 		return this.provider.hello();
 	}
 
@@ -49,11 +50,12 @@ class GreeterService extends Service {
 	}
 
 	localFunc(): string {
-		return 'I don\'t really do anything';
+		return "I don't really do anything";
 	}
 
+	// Lifecylce
 	started(): void {
-		this.logger.info('greeter.service.started()');
+		this.logger.info("greeter.service.started()");
 	}
 }
 
