@@ -35,6 +35,7 @@ class GreeterService extends Service {
 					handler: this.welcome,
 				},
 			},
+			started: this.started
 		});
 	}
 
@@ -45,6 +46,14 @@ class GreeterService extends Service {
 	welcome(ctx: Context<ActionHelloParams>): string {
 		const { name } = ctx.params;
 		return this.provider.welcome(name);
+	}
+
+	localFunc(): string {
+		return 'I don\'t really do anything';
+	}
+
+	started(): void {
+		this.logger.info('greeter.service.started()');
 	}
 }
 
