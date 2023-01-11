@@ -30,32 +30,34 @@ class GreeterService extends Service {
 			dependencies: [],
 			actions: {
 				hello: {
-					rest: {
-						method: "GET",
-						path: "/hello",
+					params: {
+						fail: { type: "string" }
 					},
 					handler: this.hello,
 				},
 
 				welcome: {
-					rest: "GET /welcome/:name",
 					params: {
-						name: "string",
+						name: { type: "string", min: 5 } // 5 chars long
 					},
 					handler: this.welcome,
 				},
+				
+				ping: {
+					handler: () => {
+						return "pong"
+					}
+				}
 			},
 
 			started: this.started,
 		});
 	}
 
-	async hello(ctx: Context<ActionHelloParams>): Promise<any> {
+	async hello(ctx: Context<ActionHelloParams>): Promise<object> {
 		const { fail } = ctx.params;
 		let bool = false;
-		if (fail === 'true') {
-			bool = true;
-		}
+		if (fail === "true") bool = true;
 		const op = await this.provider.helloInternal(bool);
 		return op.match(
 			(message) => {
@@ -64,7 +66,7 @@ class GreeterService extends Service {
 				return body;
 			},
 			(e) => {
-				const body = { message: e.message };
+				const body = { message: e.message, code: e.code };
 				this.responseResolver(ctx, ResponseLibrary.badRequest);
 				return body;
 			})
@@ -80,10 +82,6 @@ class GreeterService extends Service {
 		return {
 			message: msg,
 		}
-	}
-
-	localFunc(): string {
-		return "I don't really do anything";
 	}
 
 	// Lifecylce
