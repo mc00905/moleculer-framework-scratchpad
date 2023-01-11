@@ -5,6 +5,7 @@ module.exports = {
 		"plugin:jest/recommended",
 		"plugin:jest/style",
 		"plugin:@typescript-eslint/recommended",
+		"plugin:neverthrow",
 		"plugin:import/typescript",
 		"prettier",
 	],

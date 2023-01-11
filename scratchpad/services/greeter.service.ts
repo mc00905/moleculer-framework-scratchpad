@@ -3,8 +3,12 @@ import { Service } from "moleculer";
 import gatewaymixin, { ResponseLibrary } from "../mixins/HttpResponse.mixin";
 import GreeterProvider from "../providers/greeter.provider";
 
-export interface ActionHelloParams {
+export interface ActionWelcomeParams {
 	name: string;
+}
+
+export interface ActionHelloParams {
+	fail: string;
 }
 
 export interface MessageBody {
@@ -46,19 +50,36 @@ class GreeterService extends Service {
 		});
 	}
 
-	hello(ctx: Context): MessageBody {
-		const msg = this.provider.helloInternal();
-		const body = { message: msg };
-		this.responseResolver(ctx, ResponseLibrary.success);
-		return body;
+	async hello(ctx: Context<ActionHelloParams>): Promise<any> {
+		const { fail } = ctx.params;
+		let bool = false;
+		if (fail === 'true') {
+			bool = true;
+		}
+		const op = await this.provider.helloInternal(bool);
+		return op.match(
+			(message) => {
+				const body = { message };
+				this.responseResolver(ctx, ResponseLibrary.success);
+				return body;
+			},
+			(e) => {
+				const body = { message: e.message };
+				this.responseResolver(ctx, ResponseLibrary.badRequest);
+				return body;
+			})
 	}
 
-	welcome(ctx: Context<ActionHelloParams>): MessageBody {
+	welcome(ctx: Context<ActionWelcomeParams>): MessageBody {
 		const { name } = ctx.params;
-		const msg = this.provider.welcomeInternal(name);
-		const body = { message: msg };
-		this.responseResolver(ctx, ResponseLibrary.success);
-		return body;
+		// const msg = this.provider.welcomeInternal(name);
+		// const body = { message: msg };
+		// this.responseResolver(ctx, ResponseLibrary.success);
+		// return body;
+		const msg = `Welcome ${name}`;
+		return {
+			message: msg,
+		}
 	}
 
 	localFunc(): string {
