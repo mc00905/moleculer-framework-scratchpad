@@ -1,6 +1,6 @@
 import type { Context, ServiceSchema } from "moleculer";
 
-interface ApiMeta {
+type ApiMeta = {
 	$statusCode: number;
 	$statusMessage: string;
 	$location: string;
