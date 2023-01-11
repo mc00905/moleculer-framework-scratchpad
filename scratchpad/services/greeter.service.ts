@@ -24,9 +24,6 @@ class GreeterService extends Service {
 		this.parseServiceSchema({
 			name: "greeter",
 			mixins: [gatewaymixin],
-			settings: {
-				defaultName: "Moleculer",
-			},
 			dependencies: [],
 			actions: {
 				hello: {

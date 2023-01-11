@@ -2,6 +2,7 @@ import type { Context, ServiceBroker } from "moleculer";
 import { Service } from "moleculer";
 import type { ApiSettingsSchema, IncomingRequest, Route } from "moleculer-web";
 import ApiGateway from "moleculer-web";
+import jwt from 'jsonwebtoken';
 
 interface Meta {
 	userAgent?: string | null | undefined;
@@ -89,14 +90,28 @@ class ApiService extends Service<ApiSettingsSchema> {
 		});
 	}
 
-	authorizeUser(ctx: Context<null, Meta>, route: Route, req: IncomingRequest) {
-		const auth = req.headers.authorization;
-		return ctx.call("auth.authorizeUserToken", { token: "mytoken" })
+	async authorizeUser(ctx: Context<null, Meta>, route: Route, req: IncomingRequest) {
+		// const auth = req.headers.authorization;
+		const secret = "notsosecret";
+		const payload = {
+			iss: "apigateway",
+			sub: "user",
+		}
+		const token = jwt.sign(payload, secret);
+		await ctx.call("auth.authorizeUserToken", { token })
+		console.log(ctx.meta.user);
 	}
 
-	authorizeAdmin(ctx: Context<null, Meta>, route: Route, req: IncomingRequest) {
-		const auth = req.headers.authorization;
-		return ctx.call("auth.authorizeAdminToken", { token: "myadmintoken" })
+	async authorizeAdmin(ctx: Context<null, Meta>, route: Route, req: IncomingRequest) {
+		// const auth = req.headers.authorization;
+		const secret = "notsosecret";
+		const payload = {
+			iss: "apigateway",
+			sub: "admin",
+		}
+		const token = jwt.sign(payload, secret);
+		await ctx.call("auth.authorizeAdminToken", { token })
+		console.log(ctx.meta.user);
 	}
 }
 

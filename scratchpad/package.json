@@ -27,6 +27,7 @@
     "@fluffy-spoon/substitute": "^1.208.0",
     "@jest/globals": "^29.3.1",
     "@types/jest": "^29.2.3",
+    "@types/jsonwebtoken": "^9.0.0",
     "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "^5.44.0",
     "@typescript-eslint/parser": "^5.44.0",
@@ -47,6 +48,7 @@
   },
   "dependencies": {
     "eslint-plugin-neverthrow": "^1.1.4",
+    "jsonwebtoken": "^9.0.0",
     "moleculer": "^0.14.27",
     "moleculer-web": "^0.10.5",
     "nats": "^2.7.1",

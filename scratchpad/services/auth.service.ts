@@ -1,9 +1,15 @@
 import type { Context, ServiceBroker } from "moleculer";
 import { Service } from "moleculer";
 import gatewaymixin, { ResponseLibrary } from "../mixins/HttpResponse.mixin";
+import jwt from 'jsonwebtoken';
 
 type tokenParam = {
     token: string;
+}
+
+interface Meta {
+	userAgent?: string | null | undefined;
+	user?: object | null | undefined;
 }
 
 class AuthService extends Service {
@@ -13,9 +19,6 @@ class AuthService extends Service {
 		this.parseServiceSchema({
 			name: "auth",
 			mixins: [],
-			settings: {
-				defaultName: "Moleculer",
-			},
 			dependencies: [],
 			actions: {
 				authorizeUserToken: {
@@ -40,14 +43,20 @@ class AuthService extends Service {
 		});
 	}
 
-    authorizeUserToken(ctx: Context<tokenParam>): any {
+    authorizeUserToken(ctx: Context<tokenParam, Meta >): any {
         const token = ctx.params.token;
-        console.log(token)
+        const secret = "notsosecret";
+        const decoded: jwt.JwtPayload = jwt.verify(token, secret, { issuer: 'apigateway' }) as jwt.JwtPayload;
+        const user = decoded.sub as string;
+        ctx.meta.user = { name: user };
     }
 
-    authorizeAdminToken(ctx: Context<tokenParam>): any {
+    authorizeAdminToken(ctx: Context<tokenParam, Meta>): any {
         const token = ctx.params.token;
-        console.log(token)
+        const secret = "notsosecret";
+        const decoded: jwt.JwtPayload = jwt.verify(token, secret, { issuer: 'apigateway' }) as jwt.JwtPayload;
+        const user = decoded.sub;
+        ctx.meta.user = { name: user };
     }
 
 }
