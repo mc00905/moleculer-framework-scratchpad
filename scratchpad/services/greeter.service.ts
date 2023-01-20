@@ -1,5 +1,6 @@
 import type { Context, ServiceBroker } from "moleculer";
 import { Service } from "moleculer";
+import web from 'moleculer-web'
 import gatewaymixin, { ResponseLibrary } from "../mixins/HttpResponse.mixin";
 import GreeterProvider from "../providers/greeter.provider";
 
@@ -59,12 +60,6 @@ class GreeterService extends Service {
 
 	async hello(ctx: Context<ActionHelloParams, Meta>): Promise<object> {
 		const user = ctx.meta.user.name;
-		if (user  !== "user") {
-			this.responseResolver(ctx, ResponseLibrary.internalServerError);
-			return {
-				"message": "Bad Auth"
-			}
-		}
 		const { fail } = ctx.params;
 		let bool = false;
 		if (fail === "true") bool = true;

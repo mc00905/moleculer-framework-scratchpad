@@ -32,7 +32,8 @@ class ApiService extends Service<ApiSettingsSchema> {
 
 						aliases: {
 							"GET /hello": "greeter.hello",
-							"GET /welcome/:name": "greeter.welcome"
+							"GET /welcome/:name": "greeter.welcome",
+							"POST /saga": "a.create"
 						},
 
 						callingOptions: {},
@@ -99,7 +100,6 @@ class ApiService extends Service<ApiSettingsSchema> {
 		}
 		const token = jwt.sign(payload, secret);
 		await ctx.call("auth.authorizeUserToken", { token })
-		console.log(ctx.meta.user);
 	}
 
 	async authorizeAdmin(ctx: Context<null, Meta>, route: Route, req: IncomingRequest) {
@@ -111,7 +111,6 @@ class ApiService extends Service<ApiSettingsSchema> {
 		}
 		const token = jwt.sign(payload, secret);
 		await ctx.call("auth.authorizeAdminToken", { token })
-		console.log(ctx.meta.user);
 	}
 }
 
