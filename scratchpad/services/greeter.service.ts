@@ -59,7 +59,7 @@ class GreeterService extends Service {
 	}
 
 	async hello(ctx: Context<ActionHelloParams, Meta>): Promise<object> {
-		const user = ctx.meta.user.name;
+		// const user = ctx.meta.user.name;
 		const { fail } = ctx.params;
 		let bool = false;
 		if (fail === "true") bool = true;

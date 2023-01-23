@@ -1,5 +1,7 @@
 import type { BrokerOptions, MetricRegistry, ServiceBroker } from "moleculer";
 import { Errors } from "moleculer";
+const ChannelsMiddleware = require("@moleculer/channels").Middleware;
+
 
 /**
  * Moleculer ServiceBroker configuration file
@@ -33,7 +35,11 @@ const brokerConfig: BrokerOptions = {
 	nodeID: null,
 	// Custom metadata store. Store here what you want. Accessing: `this.broker.metadata`
 	metadata: {},
-
+	middlewares: [
+        ChannelsMiddleware({
+            adapter: "redis://redis:6379"
+        })
+    ],
 	// Enable/disable logging or use custom logger. More info: https://moleculer.services/docs/0.14/logging.html
 	// Available logger types: "Console", "File", "Pino", "Winston", "Bunyan", "debug", "Log4js", "Datadog"
 	logger: {
@@ -169,9 +175,6 @@ const brokerConfig: BrokerOptions = {
 			type: "", // Console exporter is only for development!
 		},
 	},
-
-	// Register custom middlewares
-	middlewares: [],
 
 	// Register custom REPL commands.
 	replCommands: null,

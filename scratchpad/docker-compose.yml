@@ -12,10 +12,21 @@ services:
       PORT: 3000
     depends_on:
       - nats
+      - redis
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-gw.rule=PathPrefix(`/`)"
       - "traefik.http.services.api-gw.loadbalancer.server.port=3000"
+    networks:
+      - internal
+
+
+  redis:
+    image: redis:latest
+    volumes:
+      - data:/data
+    ports:
+      - 6379:6379
     networks:
       - internal
 
@@ -28,6 +39,36 @@ services:
       SERVICES: greeter
     depends_on:
       - nats
+      - redis
+    networks:
+      - internal
+
+
+  a:
+    build:
+      context: .
+    image: scratchpad
+    env_file: docker-compose.env
+    environment:
+      SERVICES: a
+    depends_on:
+      - nats
+      - redis
+    networks:
+      - internal
+
+
+        
+  b:
+    build:
+      context: .
+    image: scratchpad
+    env_file: docker-compose.env
+    environment:
+      SERVICES: b
+    depends_on:
+      - nats
+      - redis
     networks:
       - internal
 

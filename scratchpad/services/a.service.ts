@@ -8,7 +8,7 @@ class A extends Service {
 		super(broker);
 		this.parseServiceSchema({
 			name: "a",
-			mixins: [gatewaymixin],
+			mixins: [gatewaymixin], 
 			dependencies: [],
 			actions: {
                 create: {
@@ -18,6 +18,28 @@ class A extends Service {
 					handler: this.createA,
 				},
 			},
+            channels: {
+                "b.created": {
+                    deadLettering: {
+                        enabled: true,
+                        queueName: "DEAD_LETTER"
+                    },
+                    maxRetries: 0,
+                    handler(payload: any) {
+                        if (payload.data === "fail") {
+                            throw new Error("DLQ");
+                        } else {
+                            console.log("success: ", payload.data)
+                        }
+                    }
+                },
+
+                "DEAD_LETTER": {
+                    handler(payload: any) {
+                        console.log("dlq: ", payload)
+                    }
+                },
+            },
             events: {
                 "createdB": {
                     params: {
@@ -32,10 +54,8 @@ class A extends Service {
     public createA(ctx: Context<{ data: string }, { metaDataStr: string }>) {
         const { data } = ctx.params;
         const { metaDataStr } = ctx.meta;
-        console.log("IN MICROSERVICE A");
-        console.log(`Saving ${data} to database in A`);
-        console.log("Emitting event createdA");
         ctx.emit("createdA", { data })
+        return { str: "done" }
     }
 
     public handleBCreatedEvent(ctx: Context<{ data: string }>) {

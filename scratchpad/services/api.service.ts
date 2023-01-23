@@ -99,7 +99,7 @@ class ApiService extends Service<ApiSettingsSchema> {
 			sub: "user",
 		}
 		const token = jwt.sign(payload, secret);
-		await ctx.call("auth.authorizeUserToken", { token })
+		// await ctx.call("auth.authorizeUserToken", { token })
 	}
 
 	async authorizeAdmin(ctx: Context<null, Meta>, route: Route, req: IncomingRequest) {
@@ -110,7 +110,7 @@ class ApiService extends Service<ApiSettingsSchema> {
 			sub: "admin",
 		}
 		const token = jwt.sign(payload, secret);
-		await ctx.call("auth.authorizeAdminToken", { token })
+		// await ctx.call("auth.authorizeAdminToken", { token })
 	}
 }
 

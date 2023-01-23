@@ -22,14 +22,11 @@ class B extends Service {
 	}
 
     public handleACreatedEvent(ctx: Context<{ data: string }>) {
-        console.log("IN MICROSERVICE B");
         const { data } = ctx.params;
-        console.log(`Received event from A`);
-        console.log(`Data from A: ${data}`);
         const processData = `${data}-modified-by-b`
-        console.log(`Saving ${processData} to database in B`);
-        console.log("Emitting event createdB");
-        ctx.emit("createdB", { data: processData })
+        this.broker.sendToChannel("b.created", {
+            data
+        });
 
     }
 

@@ -47,7 +47,9 @@
     "typescript": "^4.9.3"
   },
   "dependencies": {
+    "@moleculer/channels": "^0.1.4",
     "eslint-plugin-neverthrow": "^1.1.4",
+    "ioredis": "^5.2.5",
     "jsonwebtoken": "^9.0.0",
     "moleculer": "^0.14.27",
     "moleculer-web": "^0.10.5",
