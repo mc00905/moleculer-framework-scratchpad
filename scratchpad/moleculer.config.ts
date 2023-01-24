@@ -1,6 +1,6 @@
 import type { BrokerOptions, MetricRegistry, ServiceBroker } from "moleculer";
 import { Errors } from "moleculer";
-const ChannelsMiddleware = require("@moleculer/channels").Middleware;
+import { Middleware as channelsMiddleware } from "@moleculer/channels";
 
 
 /**
@@ -36,9 +36,23 @@ const brokerConfig: BrokerOptions = {
 	// Custom metadata store. Store here what you want. Accessing: `this.broker.metadata`
 	metadata: {},
 	middlewares: [
-        ChannelsMiddleware({
-            adapter: "redis://redis:6379"
-        })
+        channelsMiddleware({
+			adapter: {
+				maxRetries: 1,
+				maxInFlight: 2,
+                type: "Redis",
+                options: {
+                    redis: {
+                        host: "redis",
+                        port: 6379,
+					}
+				
+				}
+			},
+			schemaProperty: "redisChannels",
+            sendMethodName: "sendToRedisChannel",
+            adapterPropertyName: "redisAdapter"
+        }as any) as any
     ],
 	// Enable/disable logging or use custom logger. More info: https://moleculer.services/docs/0.14/logging.html
 	// Available logger types: "Console", "File", "Pino", "Winston", "Bunyan", "debug", "Log4js", "Datadog"

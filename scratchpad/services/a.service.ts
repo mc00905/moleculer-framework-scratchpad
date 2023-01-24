@@ -18,7 +18,7 @@ class A extends Service {
 					handler: this.createA,
 				},
 			},
-            channels: {
+            redisChannels: {
                 "b.created": {
                     deadLettering: {
                         enabled: true,

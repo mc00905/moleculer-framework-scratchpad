@@ -24,7 +24,7 @@ class B extends Service {
     public handleACreatedEvent(ctx: Context<{ data: string }>) {
         const { data } = ctx.params;
         const processData = `${data}-modified-by-b`
-        this.broker.sendToChannel("b.created", {
+        this.broker.sendToRedisChannel("b.created", {
             data
         });
 
